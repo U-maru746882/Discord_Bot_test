@@ -36,6 +36,7 @@ def get_forecast(city=CITY):
             # JSTに変換
             jst_time = utc_time.replace(tzinfo=pytz.utc).astimezone(pytz.timezone("Asia/Tokyo"))
             hour_min = jst_time.strftime("%H:%M")
+            date_str = jst_time.strftime("%Y-%m-%d")
 
             # 今日の日付のみ対象
             if date_str != jst_today:
