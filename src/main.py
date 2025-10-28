@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz
 
 CITY = "Suzuka,JP"
-FORECAST_HOURS = ["07:00", "12:00", "16:00", "20:00"]  # JSTで抽出したい時間
+FORECAST_HOURS = ["06:00", "12:00", "15:00", "21:00"]  # JSTで抽出したい時間
 
 # 天気英語→日本語マッピング
 WEATHER_JP = {
@@ -47,7 +47,7 @@ def get_forecast(city=CITY):
                 )
 
         # 日付の見出し（最後に処理したJST時間を使用）
-        date_str = forecast_messages[0].split()[0] if forecast_messages else jst_time.strftime("%Y-%m-%d")
+        date_str = jst_time.strftime("%Y-%m-%d")
         message = f"**{date_str} 鈴鹿市の天気予報**\n" + "\n".join(forecast_messages)
         return message
     except Exception as e:
