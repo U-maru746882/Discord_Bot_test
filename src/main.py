@@ -29,11 +29,13 @@ def get_forecast(city=CITY):
         forecast_messages = []
 
         for item in data["list"]:
-            # UTC時間をJSTに変換
+            # UTC時間をdatetimeに変換
             utc_time = datetime.strptime(item["dt_txt"], "%Y-%m-%d %H:%M:%S")
-            jst_time = utc_time.replace(tzinfo=pytz.utc).astimezone(tz)
+            # JSTに変換
+            jst_time = utc_time.replace(tzinfo=pytz.utc).astimezone(pytz.timezone("Asia/Tokyo"))
             hour_min = jst_time.strftime("%H:%M")
 
+            # JSTで指定時間と比較
             if hour_min in FORECAST_HOURS:
                 weather_en = item["weather"][0]["description"]
                 weather = WEATHER_JP.get(weather_en, weather_en)
@@ -45,7 +47,7 @@ def get_forecast(city=CITY):
                 )
 
         # 日付の見出し（最後に処理したJST時間を使用）
-        date_str = jst_time.strftime("%Y-%m-%d")
+        date_str = forecast_messages[0].split()[0] if forecast_messages else jst_time.strftime("%Y-%m-%d")
         message = f"**{date_str} 鈴鹿市の天気予報**\n" + "\n".join(forecast_messages)
         return message
     except Exception as e:
