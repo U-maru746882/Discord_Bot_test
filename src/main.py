@@ -53,8 +53,8 @@ def get_forecast(city=CITY):
                 )
 
         # 日付の見出し（最後に処理したJST時間を使用）
-        date_str = datetime.now().strftime('%Y-%m-%d')
-        message = f"**{date_str} 鈴鹿市の天気予報**\n" + "\n".join(forecast_messages)
+        # date_str = datetime.now().strftime('%Y-%m-%d')
+        message = f"**{datetime.now().strftime('%Y-%m-%d')} 鈴鹿市の天気予報**\n" + "\n".join(forecast_messages)
         return message
     except Exception as e:
         return f"天気情報の取得に失敗しました: {e}"
