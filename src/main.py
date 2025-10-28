@@ -49,12 +49,17 @@ def get_forecast(city=CITY):
                 temp_min = item["main"]["temp_min"]
                 temp_max = item["main"]["temp_max"]
                 rain = item.get("rain", {}).get("3h", 0)
-                forecast_messages.append(
-                    f"{hour_min}\n　　天気: {weather}\n　　気温: {temp_min}℃\n　　降水量: {rain} mm"
-                )
 
-        # 日付の見出し（最後に処理したJST時間を使用）
-        # date_str = datetime.now().strftime('%Y-%m-%d')
+                if rain == 0:
+                    forecast_messages.append(
+                        f"{hour_min}\n　天気: {weather}\n　気温: {temp_min}℃"
+                    )
+                else:
+                    forecast_messages.append(
+                        f"{hour_min}\n　天気: {weather}\n　気温: {temp_min}℃\n　降水量: {rain} mm"
+                    )
+
+        # 日付の見出し
         message = f"**{jst_today} 鈴鹿市の天気予報**\n" + "\n".join(forecast_messages)
         return message
     except Exception as e:
