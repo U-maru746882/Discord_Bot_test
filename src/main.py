@@ -50,12 +50,12 @@ def get_forecast(city=CITY):
                 temp_max = item["main"]["temp_max"]
                 rain = item.get("rain", {}).get("3h", 0)
                 forecast_messages.append(
-                    f"{hour_min}\n  天気: {weather}, 降水量: {rain} mm\n  最低: {temp_min}℃ / 最高: {temp_max}℃"
+                    f"{hour_min}\n　　天気: {weather}\n　　気温: {temp_min}℃\n　　降水量: {rain} mm"
                 )
 
         # 日付の見出し（最後に処理したJST時間を使用）
         # date_str = datetime.now().strftime('%Y-%m-%d')
-        message = f"**{datetime.now().strftime('%Y-%m-%d')} 鈴鹿市の天気予報**\n" + "\n".join(forecast_messages)
+        message = f"**{jst_today} 鈴鹿市の天気予報**\n" + "\n".join(forecast_messages)
         return message
     except Exception as e:
         return f"天気情報の取得に失敗しました: {e}"
