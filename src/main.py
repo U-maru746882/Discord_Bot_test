@@ -3,8 +3,22 @@ import requests
 from datetime import datetime
 import pytz
 
-CITY = "Suzuka,JP"  # 鈴鹿市
-FORECAST_HOURS = ["07:00", "12:00", "16:00", "20:00"]  # JSTで取得したい時間
+CITY = "Suzuka,JP"
+FORECAST_HOURS = ["07:00", "12:00", "16:00", "20:00"]  # JSTで抽出したい時間
+
+# 天気英語→日本語マッピング
+WEATHER_JP = {
+    "clear sky": "晴れ",
+    "few clouds": "晴れ時々曇り",
+    "scattered clouds": "曇り時々晴れ",
+    "broken clouds": "曇り",
+    "overcast clouds": "曇り",
+    "shower rain": "にわか雨",
+    "rain": "雨",
+    "thunderstorm": "雷雨",
+    "snow": "雪",
+    "mist": "霧"
+}
 
 def get_forecast(city=CITY):
     api_key = os.environ["OPENWEATHER_API_KEY"]
@@ -15,23 +29,24 @@ def get_forecast(city=CITY):
         forecast_messages = []
 
         for item in data["list"]:
-            # UTC時刻をJSTに変換
+            # UTC時間をJSTに変換
             utc_time = datetime.strptime(item["dt_txt"], "%Y-%m-%d %H:%M:%S")
             jst_time = utc_time.replace(tzinfo=pytz.utc).astimezone(tz)
             hour_min = jst_time.strftime("%H:%M")
 
             if hour_min in FORECAST_HOURS:
-                weather = item["weather"][0]["description"]
+                weather_en = item["weather"][0]["description"]
+                weather = WEATHER_JP.get(weather_en, weather_en)
                 temp_min = item["main"]["temp_min"]
                 temp_max = item["main"]["temp_max"]
                 rain = item.get("rain", {}).get("3h", 0)
                 forecast_messages.append(
-                    f"{hour_min} 天気: {weather}, 最低: {temp_min}℃ / 最高: {temp_max}℃, 降水量: {rain} mm"
+                    f"{hour_min}\n  天気: {weather}, 降水量: {rain} mm\n  最低: {temp_min}℃ / 最高: {temp_max}℃"
                 )
 
-        # 日付の見出し
+        # 日付の見出し（最後に処理したJST時間を使用）
         date_str = jst_time.strftime("%Y-%m-%d")
-        message = f"**{date_str} {city}の天気予報**\n" + "\n".join(forecast_messages)
+        message = f"**{date_str} 鈴鹿市の天気予報**\n" + "\n".join(forecast_messages)
         return message
     except Exception as e:
         return f"天気情報の取得に失敗しました: {e}"
